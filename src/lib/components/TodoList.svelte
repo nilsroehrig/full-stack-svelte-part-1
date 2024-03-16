@@ -5,6 +5,16 @@
   let todosPromise: Promise<Todo[]> = fetch("/api/todos").then((res) =>
     res.json()
   );
+
+  function toggleTodo(todo: Todo) {
+    fetch(`/api/todos/${todo.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ done: todo.done }),
+    });
+  }
 </script>
 
 <div>
@@ -23,8 +33,9 @@
           <label for="todo-{todo.id}" class:overdue class:due>
             <input
               type="checkbox"
-              bind:checked={todo.done}
               id="todo-{todo.id}"
+              bind:checked={todo.done}
+              on:change={() => toggleTodo(todo)}
             />
             {todo.title}
           </label>
