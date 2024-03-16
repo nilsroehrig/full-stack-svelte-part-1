@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Todo } from "$lib/types/Todo";
-  import { Plus } from "lucide-svelte";
+  import { PenBox, Plus } from "lucide-svelte";
   import { DateTime } from "luxon";
   import { createEventDispatcher } from "svelte";
 
@@ -24,7 +24,9 @@
 <div>
   <div class="header">
     <h1>Your Todos</h1>
-    <button class="outline secondary" on:click={() => dispatch("goto:add_todo")}><Plus /></button>
+    <button class="outline secondary" on:click={() => dispatch("goto:add_todo")}
+      ><Plus /></button
+    >
   </div>
 
   {#await todosPromise}
@@ -34,8 +36,10 @@
       {#each todos as todo (todo.id)}
         {@const overdue =
           DateTime.now().startOf("day") > DateTime.fromISO(todo.dueDate)}
-        {@const due =
-          DateTime.now().hasSame(DateTime.fromISO(todo.dueDate), "day")}
+        {@const due = DateTime.now().hasSame(
+          DateTime.fromISO(todo.dueDate),
+          "day"
+        )}
         <li>
           <label for="todo-{todo.id}" class:overdue class:due>
             <input
@@ -46,6 +50,11 @@
             />
             {todo.title}
           </label>
+          <button
+            class="unstyled"
+            on:click={() => dispatch("goto:edit_todo", { ...todo })}
+            ><PenBox size="18" /></button
+          >
         </li>
       {:else}
         <p>No todos yet.</p>
@@ -68,6 +77,10 @@
     padding-bottom: var(--pico-spacing);
     border-bottom: solid thin var(--pico-muted-border-color);
     margin: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pico-spacing);
+    align-items: center;
   }
 
   li:first-child {
@@ -100,5 +113,13 @@
 
   .header h1 {
     margin: 0;
+  }
+
+  .unstyled {
+    padding: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    color: var(--pico-color);
   }
 </style>
