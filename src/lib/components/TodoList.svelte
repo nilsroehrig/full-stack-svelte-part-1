@@ -1,0 +1,75 @@
+<script lang="ts">
+  import type { Todo } from "$lib/types/Todo";
+  import { DateTime } from "luxon";
+
+  let todosPromise: Promise<Todo[]> = fetch("/api/todos").then((res) =>
+    res.json()
+  );
+</script>
+
+<div>
+  <h1>Your Todos</h1>
+
+  {#await todosPromise}
+    <div aria-busy="true"></div>
+  {:then todos}
+    <ul>
+      {#each todos as todo (todo.id)}
+        {@const overdue =
+          DateTime.now().startOf("day") > DateTime.fromISO(todo.dueDate)}
+        {@const due =
+          DateTime.now().hasSame(DateTime.fromISO(todo.dueDate), "day")}
+        <li>
+          <label for="todo-{todo.id}" class:overdue class:due>
+            <input
+              type="checkbox"
+              bind:checked={todo.done}
+              id="todo-{todo.id}"
+            />
+            {todo.title}
+          </label>
+        </li>
+      {:else}
+        <p>No todos yet.</p>
+      {/each}
+    </ul>
+  {:catch error}
+    <p class="error">{error.message}</p>
+  {/await}
+</div>
+
+<style>
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    padding-top: var(--pico-spacing);
+    padding-bottom: var(--pico-spacing);
+    border-bottom: solid thin var(--pico-muted-border-color);
+    margin: 0;
+  }
+
+  li:first-child {
+    border-top: solid thin var(--pico-muted-border-color);
+  }
+
+  label {
+    margin: 0;
+    width: 100%;
+  }
+
+  .error {
+    color: var(--pico-color-red-500);
+  }
+
+  .due {
+    color: var(--pico-color-pumpkin-500);
+  }
+
+  .overdue {
+    color: var(--pico-color-orange-500);
+  }
+</style>

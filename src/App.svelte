@@ -1,5 +1,8 @@
 <script lang="ts">
+  import TodoList from "$lib/components/TodoList.svelte";
   import { ListTodo } from "lucide-svelte";
+
+  let view = "list_todos";
 </script>
 
 <div class="wrapper">
@@ -12,7 +15,9 @@
   </header>
 
   <main class="container">
-      <p class="centered">Content goes here!</p>
+    {#if view === "list_todos"}
+      <TodoList />
+    {/if}
   </main>
 
   <footer>
@@ -50,8 +55,5 @@
     border-top: solid thin var(--pico-muted-border-color);
   }
 
-  .centered {
-    align-self: center;
-    justify-self: center;
-  }
+
 </style>
