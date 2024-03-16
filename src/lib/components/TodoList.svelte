@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Todo } from "$lib/types/Todo";
-  import { PenBox, Plus } from "lucide-svelte";
+  import { PenBox, Plus, Trash2 } from "lucide-svelte";
   import { DateTime } from "luxon";
   import { createEventDispatcher } from "svelte";
 
@@ -17,6 +17,14 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ done: todo.done }),
+    });
+  }
+
+  function deleteTodo(todo: Todo) {
+    fetch(`/api/todos/${todo.id}`, {
+      method: "DELETE",
+    }).then(() => {
+      todosPromise = fetch("/api/todos").then((res) => res.json());
     });
   }
 </script>
@@ -50,11 +58,16 @@
             />
             {todo.title}
           </label>
-          <button
-            class="unstyled"
-            on:click={() => dispatch("goto:edit_todo", { ...todo })}
-            ><PenBox size="18" /></button
-          >
+          <span class="actions">
+            <button
+              class="unstyled"
+              on:click={() => dispatch("goto:edit_todo", { ...todo })}
+              ><PenBox size="18" /></button
+            >
+            <button class="unstyled" on:click={() => deleteTodo(todo)}
+              ><Trash2 size="18" /></button
+            >
+          </span>
         </li>
       {:else}
         <p>No todos yet.</p>
@@ -121,5 +134,10 @@
     background: none;
     box-shadow: none;
     color: var(--pico-color);
+  }
+
+  .actions {
+    display: flex;
+    gap: var(--pico-spacing);
   }
 </style>
