@@ -1,8 +1,9 @@
 <script lang="ts">
+  import AddTodo from "$lib/components/AddTodo.svelte";
   import TodoList from "$lib/components/TodoList.svelte";
   import { ListTodo } from "lucide-svelte";
 
-  let view = "list_todos";
+  let view: "list_todos" | "add_todo" = "list_todos";
 </script>
 
 <div class="wrapper">
@@ -16,7 +17,9 @@
 
   <main class="container">
     {#if view === "list_todos"}
-      <TodoList />
+      <TodoList on:goto:add_todo={() => view = "add_todo"} />
+    {:else if view === "add_todo"}
+      <AddTodo on:goto:list_todos={() => view = "list_todos"} />
     {/if}
   </main>
 

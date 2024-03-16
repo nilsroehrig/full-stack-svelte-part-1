@@ -1,6 +1,10 @@
 <script lang="ts">
   import type { Todo } from "$lib/types/Todo";
+  import { Plus } from "lucide-svelte";
   import { DateTime } from "luxon";
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
 
   let todosPromise: Promise<Todo[]> = fetch("/api/todos").then((res) =>
     res.json()
@@ -18,7 +22,10 @@
 </script>
 
 <div>
-  <h1>Your Todos</h1>
+  <div class="header">
+    <h1>Your Todos</h1>
+    <button class="outline secondary" on:click={() => dispatch("goto:add_todo")}><Plus /></button>
+  </div>
 
   {#await todosPromise}
     <div aria-busy="true"></div>
@@ -82,5 +89,16 @@
 
   .overdue {
     color: var(--pico-color-orange-500);
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(var(--pico-spacing) * 2);
+  }
+
+  .header h1 {
+    margin: 0;
   }
 </style>
